@@ -18,7 +18,7 @@ jobs:
         release: "7.8"
         usesh: true
         prepare: |
-          pkg_add autoconf%2.69 automake%1.16 libtool gmake gpgme
+          pkg_add autoconf%2.71 automake%1.16 libtool gmake gpgme
         run: |
           export AUTOCONF_VERSION=2.71
           export AUTOMAKE_VERSION=1.16
