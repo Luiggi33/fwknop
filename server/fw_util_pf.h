@@ -41,8 +41,8 @@
 
 /* pf command args
 */
-#define PF_ADD_RULE_ARGS              "pass in quick proto %u from %s to %s port %u keep state label " EXPIRE_COMMENT_PREFIX "%u"
-#define PF_ADD_RULE_ARGS_IF_BOUND     "pass in proto %u from %s to %s port %u keep state label " EXPIRE_COMMENT_PREFIX "%u"
+#define PF_ADD_RULE_ARGS              "pass in quick proto %u from %s to %s port %u keep state label " EXPIRE_COMMENT_PREFIX "%u\n"
+#define PF_ADD_RULE_ARGS_IF_BOUND     "pass in proto %u from %s to %s port %u keep state label " EXPIRE_COMMENT_PREFIX "%u\n"
 #define PF_WRITE_ANCHOR_RULES_ARGS    "-a %s -f -"
 #if HAVE_EXECVP
   #define PF_LIST_ANCHOR_RULES_ARGS   "-a %s -s rules"
