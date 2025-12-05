@@ -32,6 +32,5 @@ jobs:
       with:
         name: fwknop-openbsd
         path: |
-          install-root/usr/local/bin/fwknop
-          install-root/usr/local/sbin/fwknopd
+          install-root/
         retention-days: 7
