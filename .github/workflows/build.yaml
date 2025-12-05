@@ -1,0 +1,35 @@
+name: Compile fwknop
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-openbsd:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build on OpenBSD
+      uses: vmactions/openbsd-vm@v1.2.4
+      with:
+        release: "7.8"
+        usesh: true
+        prepare: |
+          pkg_add autoconf automake libtool gmake libpcap gpgme
+        run: |
+          ./autogen.sh
+          ./configure --prefix=/usr/local
+          gmake
+          gmake install DESTDIR=$PWD/install-root
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: fwknop-openbsd
+        path: |
+          install-root/usr/local/bin/fwknop
+          install-root/usr/local/sbin/fwknopd
+        retention-days: 7
