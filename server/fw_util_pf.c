@@ -245,7 +245,7 @@ process_spa_request(const fko_srv_options_t * const opts,
             */
             memset(new_rule, 0x0, MAX_PF_NEW_RULE_LEN);
             snprintf(new_rule, MAX_PF_NEW_RULE_LEN-1,
-                acc->pf_if_bound ? PF_ADD_RULE_ARGS_IF_BOUND "\n" : PF_ADD_RULE_ARGS "\n",
+                acc->pf_no_quick ? PF_ADD_RULE_ARGS_NO_QUICK "\n" : PF_ADD_RULE_ARGS "\n",
                 ple->proto,
                 spadat->use_src_ip,
                 (fwc.use_destination ? spadat->pkt_destination_ip : PF_ANY_IP),

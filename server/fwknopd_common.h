@@ -453,7 +453,7 @@ typedef struct acc_stanza
 
     /* PF firewall settings
     */
-    unsigned char        pf_if_bound;
+    unsigned char        pf_no_quick;
 
     struct acc_stanza   *next;
 } acc_stanza_t;
