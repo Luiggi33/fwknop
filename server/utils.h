@@ -66,5 +66,6 @@ int   is_valid_file(const char *path);
 int   verify_file_perms_ownership(const char *file, int fd);
 void  truncate_partial_line(char *str);
 int   is_digits(const char * const str);
+int   drop_privileges(const char *username);
 
 #endif  /* UTILS_H */

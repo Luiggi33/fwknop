@@ -34,6 +34,10 @@
 #include "fw_util.h"
 #include "cmd_cycle.h"
 
+#include <pwd.h>
+#include <grp.h>
+#include <errno.h>
+
 /* Basic directory/binary checks (stat() and whether the path is actually
  * a directory or an executable).
 */
@@ -240,6 +244,67 @@ clean_exit(fko_srv_options_t *opts, unsigned int fw_cleanup_flag, unsigned int e
     free_cmd_cycle_list(opts);
     free_configs(opts);
     exit(exit_status);
+}
+
+int
+drop_privileges(const char *username) {
+    struct passwd *pw;
+    uid_t target_uid;
+    gid_t target_gid;
+
+    if (username == NULL || username[0] == '\0') {
+        log_msg(LOG_ERR, "drop_privileges: invalid username");
+        return -1;
+    }
+
+    if (getuid() != 0 && geteuid() != 0) {
+        log_msg(LOG_ERR, "drop_privileges: Can't drop privileges, we are not root");
+        return -1;
+    }
+ 
+    pw = getpwnam(username);
+    if (!pw) {
+        log_msg(LOG_ERR, "drop_privileges: User %s not found", username);
+        return -1;
+    }
+
+    if (pw->pw_uid == 0) {
+        log_msg(LOG_ERR, "drop_privileges: Refusing to drop privileges to root user");
+        return -1;
+    }
+
+    target_uid = pw->pw_uid;
+    target_gid = pw->pw_gid;
+
+    log_msg(LOG_INFO, "Dropping privileges to user %s (UID: %d, GID: %d)", 
+            username, target_uid, target_gid);
+ 
+    if (initgroups(username, target_gid) == -1) {
+        log_msg(LOG_ERR, "drop_privileges: initgroups failed: %s", strerror(errno));
+        return -1;
+    }
+ 
+    if (setgid(target_gid) == -1) {
+        log_msg(LOG_ERR, "drop_privileges: setgid failed: %s", strerror(errno));
+        return -1;
+    }
+ 
+    if (setuid(target_uid) == -1) {
+        log_msg(LOG_ERR, "drop_privileges: setuid failed: %s", strerror(errno));
+        return -1;
+    }
+ 
+    if (getuid() != target_uid || geteuid() != target_uid) {
+        log_msg(LOG_ERR, "drop_privileges: Failed to set UID to %d", target_uid);
+        return -1;
+    }
+    if (getgid() != target_gid || getegid() != target_gid) {
+        log_msg(LOG_ERR, "drop_privileges: Failed to set GID to %d", target_gid);
+        return -1;
+    }
+
+    log_msg(LOG_INFO, "Successfully dropped privileges to user %s", username);
+    return 0;
 }
 
 /***EOF***/
